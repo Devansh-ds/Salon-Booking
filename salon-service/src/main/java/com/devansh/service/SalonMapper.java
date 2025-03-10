@@ -44,7 +44,6 @@ public class SalonMapper {
                     .stream()
                     .map(imageData -> {
                         String name = imageData.getName();
-                        byte[] image = imageService.getImage(name);
                         return new ImageResponse("http://localhost:8082/images/" + name);
                     })
                     .toList();

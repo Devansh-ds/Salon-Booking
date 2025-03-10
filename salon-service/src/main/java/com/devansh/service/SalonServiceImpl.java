@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,10 @@ public class SalonServiceImpl implements SalonService {
         UserDto userDto = objectMapper.readValue(salonCreationDto.userDto(), UserDto.class);
         List<MultipartFile> files = salonCreationDto.files();
 
+        if (files == null) {
+            files = new ArrayList<MultipartFile>();
+        }
+
         List<ImageData> imageDataList = imageService.uploadImage(files);
         logger.info("Images are uploaded");
 
@@ -45,7 +50,7 @@ public class SalonServiceImpl implements SalonService {
         salon.setImages(imageDataList);
 
         Salon savedSalon = salonRepository.save(salon);
-        logger.info("Salon saved : {}", savedSalon);
+        logger.info("Salon saved");
 
         return salonMapper.toSalonResponseDto(savedSalon);
     }
@@ -57,7 +62,7 @@ public class SalonServiceImpl implements SalonService {
                 .findById(salonId)
                 .orElseThrow(() -> new EntityNotFoundException("Salon with id : " + salonId + " not found"));
 
-        logger.info("Salon found : " + salon);
+        logger.info("Salon found");
 
         return salonMapper.toSalonResponseDto(salon);
     }
@@ -115,6 +120,22 @@ public class SalonServiceImpl implements SalonService {
                 .findById(salonId)
                 .orElseThrow(() -> new EntityNotFoundException("Salon with id : " + salonId + " not found"));
         salonRepository.deleteById(salonId);
+    }
+
+    @Override
+    public SalonResponseDto getSalonByOwnerId(Integer ownerId) {
+        Salon salon = salonRepository
+                .getSalonByOwnerId(ownerId)
+                .orElseThrow(() -> new EntityNotFoundException("Salon with owner id : " + ownerId + " not found"));
+        return salonMapper.toSalonResponseDto(salon);
+    }
+
+    @Override
+    public List<SalonResponseDto> searchSalon(String keyword) {
+        List<Salon> allSalons = salonRepository.searchSalon(keyword);
+        return allSalons
+                .stream()
+                .map(salonMapper::toSalonResponseDto).toList();
     }
 }
 

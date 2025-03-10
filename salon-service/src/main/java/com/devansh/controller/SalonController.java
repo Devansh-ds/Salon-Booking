@@ -48,6 +48,16 @@ public class SalonController {
         return ResponseEntity.ok("Salon deleted successfully");
     }
 
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<SalonResponseDto> getSalonByOwnerId(@PathVariable Integer ownerId) throws IOException {
+        return ResponseEntity.ok(salonService.getSalonByOwnerId(ownerId));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<SalonResponseDto>> searchSalon(@RequestParam String keyword) throws IOException {
+        return ResponseEntity.ok(salonService.searchSalon(keyword));
+    }
+
 
 }
 
