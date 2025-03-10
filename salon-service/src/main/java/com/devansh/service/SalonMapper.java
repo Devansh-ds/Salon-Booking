@@ -8,6 +8,8 @@ import com.devansh.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,15 +33,22 @@ public class SalonMapper {
 
     public SalonResponseDto toSalonResponseDto(Salon savedSalon) {
 
-        List<ImageResponse> imageResponses = savedSalon
-                .getImages()
-                .stream()
-                .map(imageData -> {
-                    String name = imageData.getName();
-                    byte[] image = imageService.getImage(name);
-                    return new ImageResponse("http://localhost:8082/images/" + name);
-                })
-                .toList();
+        List<ImageResponse> imageResponses;
+
+        if (savedSalon.getImages().isEmpty()) {
+            imageResponses = new ArrayList<ImageResponse>();
+        }
+        else {
+            imageResponses = savedSalon
+                    .getImages()
+                    .stream()
+                    .map(imageData -> {
+                        String name = imageData.getName();
+                        byte[] image = imageService.getImage(name);
+                        return new ImageResponse("http://localhost:8082/images/" + name);
+                    })
+                    .toList();
+        }
 
         return SalonResponseDto
                 .builder()

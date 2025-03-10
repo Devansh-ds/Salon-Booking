@@ -1,9 +1,6 @@
 package com.devansh.controller;
 
-import com.devansh.dto.SalonCreationDto;
-import com.devansh.dto.SalonRequestDto;
-import com.devansh.dto.SalonResponseDto;
-import com.devansh.dto.UserDto;
+import com.devansh.dto.*;
 import com.devansh.service.SalonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +29,24 @@ public class SalonController {
         return ResponseEntity.ok(salonService.getSalonById(salonId));
     }
 
+    @PutMapping("/{salonId}")
+    public ResponseEntity<SalonResponseDto> updateSalon(
+            @ModelAttribute SalonUpdationDto salonUpdationDto,
+            @PathVariable Integer salonId
+            ) throws IOException {
+        return ResponseEntity.ok(salonService.updateSalon(salonUpdationDto, salonId));
+    }
 
+    @GetMapping
+    public ResponseEntity<List<SalonResponseDto>> getAllSalon() throws IOException {
+        return ResponseEntity.ok(salonService.getAllSalons());
+    }
+
+    @DeleteMapping("/{salonId}")
+    public ResponseEntity<String> deleteSalon(@PathVariable Integer salonId) throws IOException {
+        salonService.deleteSalonById(salonId);
+        return ResponseEntity.ok("Salon deleted successfully");
+    }
 
 
 }
